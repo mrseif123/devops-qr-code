@@ -32,7 +32,7 @@ The front-end code exits in the `front-end-nextjs` directory. You can run the fr
 - Make sure you are in the `front-end-nextjs` directory
 - Install the dependencies: `npm install`
 - Run the NextJS Server: `npm run dev`
-- Your Front-end Server should be running on `http://localhost:3000`
+- Your Front-end Server should be running on `http://localhost:3001`
 
 
 ## Goal
