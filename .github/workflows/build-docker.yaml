@@ -1,0 +1,26 @@
+name: Build & Publish image to Docker Hub
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build API Image
+        run: docker build ./api/ -t mrseif123/devops-qr-api:latest
+
+      - name: Build FrontEnd Image
+        run: docker build ./front-end-nextjs/ -t mrseif123/devops-qr-frontend:latest
+        
+      - name: Push Images
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push mrseif123/devops-qr-api:latest
+          docker push mrseif123/devops-qr-frontend:latest
