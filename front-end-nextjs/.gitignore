@@ -16,6 +16,11 @@
 # production
 /build
 
+.pnp.cjs
+.pnp.loader.mjs
+
+.yarn
+
 # misc
 .DS_Store
 *.pem
