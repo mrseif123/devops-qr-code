@@ -15,15 +15,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Install gcloud CLI
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
 
-      - name: Build API Image
-        run: docker build ./api/ -t mrseif123/devops-qr-api:latest
-
-      - name: Build FrontEnd Image
-        run: docker build ./front-end-nextjs/ -t mrseif123/devops-qr-frontend:latest
-        
-      - name: Push Images
+      - name: Build & Push Docker images
         run: |
-          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push mrseif123/devops-qr-api:latest
-          docker push mrseif123/devops-qr-frontend:latest
+          gcloud auth configure-docker me-west1-docker.pkg.dev
+          docker build -t me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest ./api
+          docker build -t me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest ./front-end-nextjs
+          docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest
+          docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest
