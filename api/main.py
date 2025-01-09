@@ -31,6 +31,10 @@ s3 = boto3.client(
 
 bucket_name = 'tmp-bucker-mrseif123' # Add your bucket name here
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.post("/generate-qr/")
 async def generate_qr(url: str):
     # Generate QR Code
