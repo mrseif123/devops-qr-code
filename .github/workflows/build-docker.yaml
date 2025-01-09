@@ -20,7 +20,6 @@ jobs:
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
-          
 
       - name: Build & Push Docker images
         env:
@@ -31,3 +30,15 @@ jobs:
           docker build -t me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest ./front-end-nextjs
           docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest
           docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest
+
+      - name: 'Deploy API to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'qr-code-generator'
+          image: 'me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest'
+          
+      - name: 'Deploy Frontend to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'qr-code-generator-front-end'
+          image: 'me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest'
