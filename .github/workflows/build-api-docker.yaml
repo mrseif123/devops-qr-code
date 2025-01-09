@@ -1,10 +1,12 @@
-name: Build & Publish image to Docker Hub
+name: Build & Publish API
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - 'api/**'
 
 jobs:
   publish_images:
@@ -27,9 +29,7 @@ jobs:
         run: |
           gcloud auth configure-docker me-west1-docker.pkg.dev
           docker build -t me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest ./api
-          docker build -t me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest ./front-end-nextjs
           docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest
-          docker push me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest
 
       - name: 'Deploy API to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
@@ -38,11 +38,3 @@ jobs:
           region: 'me-west1'
           flags: '--allow-unauthenticated'
           image: 'me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/api:latest'
-          
-      - name: 'Deploy Frontend to Cloud Run'
-        uses: 'google-github-actions/deploy-cloudrun@v2'
-        with:
-          service: 'front-end-nextjs'
-          region: 'me-west1'
-          flags: '--allow-unauthenticated'
-          image: 'me-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/qr-code-generator-repo/front-end-nextjs:latest'
